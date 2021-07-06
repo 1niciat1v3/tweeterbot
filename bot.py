@@ -20,3 +20,23 @@ def store_last_seen_id(last_seen_id,file_name):
     f_write.write(str(last_seen_id))
     f_write.close()
     return
+
+FILE_NAME_TEST = 'test_tweet.txt'
+
+def test_tweet():
+    print('Retreaving tweets...')
+    last_seen_id = retreive_last_seen_id(FILE_NAME_TEST)
+    mentions = api.mentions_timeline(last_seen_id,tweet_mode = "extended")
+    for mention in reversed(mentions):
+        if not mention:
+            return
+        print(str(mention.id) + ' - ' + mention.full_text, flush=True)
+        last_test_tweet = mention.id
+        store_last_seen_id(last_test_tweet,FILE_NAME_TEST)
+        print('found @elizabot9', flush=True)
+        print('fav-ing and retweeting tweet...', flush=True) 
+        api.create_favorite(mention.id)
+        api.retweet(mention.id)
+while True:
+    test_tweet()
+    time.sleep(15)
